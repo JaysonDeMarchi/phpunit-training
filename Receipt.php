@@ -2,10 +2,15 @@
 
 namespace SomethingDigital\UnitTestTraining;
 
+use \BadMethodCallException;
+
 class Receipt
 {
     public function total(array $items = [], ?float $coupon = null): int
     {
+        if ($coupon > 1.00) {
+            throw new BadMethodCallException('Coupon must be <= 1.00');
+        }
         $total = array_sum($items);
         if ($coupon) {
             $total *= 1 - $coupon;
