@@ -2,13 +2,18 @@
 
 namespace SomethingDigital\UnitTestTraining;
 
+use SomethingDigital\UnitTestTraining\Api\FormatterInterface;
+
 use \BadMethodCallException;
 
 class Receipt
 {
-    public function currencyAmount($input): float
-    {
-        return round($input, 2);
+    protected $formatter;
+
+    public function __construct(
+        FormatterInterface $formatter
+    ) {
+        $this->formatter = $formatter;
     }
 
     public function getSubtotal(array $items = [], ?float $coupon = null): int
@@ -25,7 +30,7 @@ class Receipt
 
     public function tax(float $amount): float
     {
-        return ($amount * $this->taxPercent);
+        return $this->formatter->currencyAmount($amount * $this->taxPercent);
     }
 
     public function postTaxTotal(array $items, ?float $coupon = null): float

@@ -3,6 +3,7 @@
 namespace SomethingDigital\UnitTestTraining\Test\Unit;
 
 use SomethingDigital\UnitTestTraining\Receipt;
+use SomethingDigital\UnitTestTraining\Formatter;
 use PHPUnit\Framework\TestCase;
 
 class ReceiptTest extends TestCase
@@ -11,7 +12,21 @@ class ReceiptTest extends TestCase
 
     public function setUp(): void
     {
-        $this->receipt = new Receipt();
+        $this->formatter = $this->getMockBuilder(
+            Formatter::class
+        )->setMethods([
+            'currencyAmount',
+        ])->getMock();
+
+        $this->formatter->expects(
+            $this->any()
+        )->method(
+            'currencyAmount'
+        )->with(
+            $this->anything()
+        )->will($this->returnArgument(0));
+
+        $this->receipt = new Receipt($this->formatter);
         $this->receipt->taxPercent = 0.10;
     }
 
@@ -97,6 +112,8 @@ class ReceiptTest extends TestCase
         )->setMethods([
             'tax',
             'getSubtotal',
+        ])->setConstructorArgs([
+            $this->formatter,
         ])->getMock();
 
         $receipt->expects(
@@ -122,43 +139,5 @@ class ReceiptTest extends TestCase
             11.00,
             $result
         );
-    }
-
-    /**
-     * @dataProvider provideCurrencyAmount
-     */
-    public function testCurrencyAmount($input, float $expected, string $message): void
-    {
-        $this->assertSame(
-            $expected,
-            $this->receipt->currencyAmount($input),
-            $message
-        );
-    }
-
-    public function provideCurrencyAmount(): array
-    {
-        return [
-            [
-                1,
-                1.00,
-                '1 should be transformed into 1.00',
-            ],
-            [
-                1.1,
-                1.10,
-                '1.1 should be transformed into 1.10',
-            ],
-            [
-                1.11,
-                1.11,
-                '1.11 should be transformed into 1.11',
-            ],
-            [
-                1.111,
-                1.11,
-                '1.111 should be transformed into 1.11',
-            ],
-        ];
     }
 }
