@@ -30,4 +30,19 @@ class ReceiptTest extends TestCase
             'When summing the total should equal 15'
         );
     }
+
+    public function testTax(): void
+    {
+        $input = [
+            'amount' => 10.00,
+            'taxPercent' => 0.10,
+        ];
+        $output = $this->receipt->tax($input['amount'], $input['taxPercent']);
+
+        $this->assertEquals(
+            1.00,
+            $output,
+            'The tax calculation should equal 1.00'
+        );
+    }
 }
