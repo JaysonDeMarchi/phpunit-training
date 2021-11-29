@@ -59,4 +59,22 @@ class ReceiptTest extends TestCase
             'The tax calculation should equal 1.00'
         );
     }
+
+    public function testPostTaxTotal(): void
+    {
+        $receipt = $this->getMockBuilder(
+            Receipt::class
+        )->setMethods([
+            'tax',
+            'total',
+        ])->getMock();
+        $receipt->method('total')->will($this->returnValue(10.00));
+        $receipt->method('tax')->will($this->returnValue(1.00));
+        $result = $receipt->testPostTaxTotal([1,2,5,8], 0.20, null);
+
+        $this->assertEquals(
+            11.00,
+            $result
+        );
+    }
 }
