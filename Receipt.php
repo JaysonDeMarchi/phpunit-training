@@ -11,7 +11,7 @@ class Receipt
         return round($input, 2);
     }
 
-    public function total(array $items = [], ?float $coupon = null): int
+    public function getSubtotal(array $items = [], ?float $coupon = null): int
     {
         if ($coupon > 1.00) {
             throw new BadMethodCallException('Coupon must be <= 1.00');
@@ -23,14 +23,14 @@ class Receipt
         return $total;
     }
 
-    public function tax(float $amount, float $taxPercent): float
+    public function tax(float $amount): float
     {
-        return ($amount * $taxPercent);
+        return ($amount * $this->taxPercent);
     }
 
-    public function testPostTaxTotal(array $items, float $taxPercent, ?float $coupon = null): float
+    public function testPostTaxTotal(array $items, ?float $coupon = null): float
     {
-        $subtotal = $this->total($items, $coupon);
+        $subtotal = $this->getSubtotal($items, $coupon);
         return $subtotal + $this->tax($subtotal, $taxPercent);
     }
 }

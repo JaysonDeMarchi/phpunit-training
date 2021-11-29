@@ -12,6 +12,7 @@ class ReceiptTest extends TestCase
     public function setUp(): void
     {
         $this->receipt = new Receipt();
+        $this->receipt->taxPercent = 0.10;
     }
 
     public function tearDown(): void
@@ -20,12 +21,12 @@ class ReceiptTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTotal
+     * @dataProvider provideGetSubtotal
      */
-    public function testTotal($items, $expected): void
+    public function testGetSubtotal($items, $expected): void
     {
         $couponPercent = null;
-        $output = $this->receipt->total($items, $couponPercent);
+        $output = $this->receipt->getSubTotal($items, $couponPercent);
 
         $this->assertEquals(
             $expected,
@@ -34,7 +35,7 @@ class ReceiptTest extends TestCase
         );
     }
 
-    public function provideTotal(): array
+    public function provideGetSubtotal(): array
     {
         return [
             'ints totaling 16' => [
@@ -52,11 +53,11 @@ class ReceiptTest extends TestCase
         ];
     }
 
-    public function testTotalAndCoupon(): void
+    public function testGetSubtotalAndCoupon(): void
     {
         $input = [0,2,5,8];
         $couponPercent = 0.20;
-        $output = $this->receipt->total($input, $couponPercent);
+        $output = $this->receipt->getSubTotal($input, $couponPercent);
 
         $this->assertEquals(
             12,
@@ -65,21 +66,20 @@ class ReceiptTest extends TestCase
         );
     }
 
-    public function testTotalException(): void
+    public function testGetSubtotalException(): void
     {
         $input = [0,2,5,8];
         $couponPercent = 1.20;
         $this->expectException('BadMethodCallException');
-        $this->receipt->total($input, $couponPercent);
+        $this->receipt->getSubTotal($input, $couponPercent);
     }
 
     public function testTax(): void
     {
         $input = [
             'amount' => 10.00,
-            'taxPercent' => 0.10,
         ];
-        $output = $this->receipt->tax($input['amount'], $input['taxPercent']);
+        $output = $this->receipt->tax($input['amount']);
 
         $this->assertEquals(
             1.00,
@@ -91,19 +91,18 @@ class ReceiptTest extends TestCase
     public function testPostTaxTotal(): void
     {
         $items = [1,2,5,8];
-        $taxPercent = 0.20;
         $coupon = null;
         $receipt = $this->getMockBuilder(
             Receipt::class
         )->setMethods([
             'tax',
-            'total',
+            'getSubtotal',
         ])->getMock();
 
         $receipt->expects(
             $this->once()
         )->method(
-            'total'
+            'getSubtotal'
         )->with(
             $items,
             $coupon
@@ -114,11 +113,10 @@ class ReceiptTest extends TestCase
         )->method(
             'tax'
         )->with(
-            10.00,
-            $taxPercent
+            10.00
         )->will($this->returnValue(1.00));
 
-        $result = $receipt->testPostTaxTotal($items, $taxPercent, $coupon);
+        $result = $receipt->testPostTaxTotal($items, $coupon);
 
         $this->assertEquals(
             11.00,
