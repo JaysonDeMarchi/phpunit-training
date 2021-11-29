@@ -28,7 +28,7 @@ class Receipt
         return ($amount * $this->taxPercent);
     }
 
-    public function testPostTaxTotal(array $items, ?float $coupon = null): float
+    public function postTaxTotal(array $items, ?float $coupon = null): float
     {
         $subtotal = $this->getSubtotal($items, $coupon);
         return $subtotal + $this->tax($subtotal, $taxPercent);

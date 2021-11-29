@@ -116,7 +116,7 @@ class ReceiptTest extends TestCase
             10.00
         )->will($this->returnValue(1.00));
 
-        $result = $receipt->testPostTaxTotal($items, $coupon);
+        $result = $receipt->postTaxTotal($items, $coupon);
 
         $this->assertEquals(
             11.00,
