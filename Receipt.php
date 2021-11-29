@@ -4,9 +4,13 @@ namespace SomethingDigital\UnitTestTraining;
 
 class Receipt
 {
-    public function total(array $items = []): int
+    public function total(array $items = [], ?float $coupon = null): int
     {
-        return array_sum($items);
+        $total = array_sum($items);
+        if ($coupon) {
+            $total *= 1 - $coupon;
+        }
+        return $total;
     }
 
     public function tax(float $amount, float $taxPercent): float
