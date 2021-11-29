@@ -6,6 +6,11 @@ use \BadMethodCallException;
 
 class Receipt
 {
+    public function currencyAmount($input): float
+    {
+        return round($input, 2);
+    }
+
     public function total(array $items = [], ?float $coupon = null): int
     {
         if ($coupon > 1.00) {
