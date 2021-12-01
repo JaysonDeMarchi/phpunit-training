@@ -19,7 +19,7 @@ class Receipt
         $this->taxPercent = $taxPercent;
     }
 
-    public function getSubtotal(array $items = [], ?float $coupon = null): int
+    public function getSubtotal(array $items = [], ?float $coupon = null): float
     {
         if ($coupon > 1.00) {
             throw new BadMethodCallException('Coupon must be <= 1.00');
