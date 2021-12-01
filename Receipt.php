@@ -8,12 +8,15 @@ use \BadMethodCallException;
 
 class Receipt
 {
+    protected $taxPercent;
     protected $formatter;
 
     public function __construct(
-        FormatterInterface $formatter
+        FormatterInterface $formatter,
+        float $taxPercent = 0.10
     ) {
         $this->formatter = $formatter;
+        $this->taxPercent = $taxPercent;
     }
 
     public function getSubtotal(array $items = [], ?float $coupon = null): int
@@ -36,6 +39,6 @@ class Receipt
     public function postTaxTotal(array $items, ?float $coupon = null): float
     {
         $subtotal = $this->getSubtotal($items, $coupon);
-        return $subtotal + $this->tax($subtotal, $taxPercent);
+        return $subtotal + $this->tax($subtotal, $this->taxPercent);
     }
 }

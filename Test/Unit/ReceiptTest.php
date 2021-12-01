@@ -27,7 +27,6 @@ class ReceiptTest extends TestCase
         )->will($this->returnArgument(0));
 
         $this->receipt = new Receipt($this->formatter);
-        $this->receipt->taxPercent = 0.10;
     }
 
     public function tearDown(): void
